@@ -70,7 +70,6 @@
         
         input:focus { border-color: #38bdf8; }
 
-        /* Modal Overlay */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -99,12 +98,53 @@
             to { opacity: 1; transform: scale(1); }
         }
 
+        /* Dropdown Payment Styling */
+        .payment-dropdown-btn {
+            width: 100%;
+            background: #0f172a;
+            padding: 14px 15px;
+            border-radius: 15px;
+            border: 1px solid #334155;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: bold;
+            color: #94a3b8;
+        }
+
+        .payment-list {
+            display: none;
+            background: #0f172a;
+            border-radius: 15px;
+            margin-top: 5px;
+            border: 1px solid #334155;
+            overflow: hidden;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .payment-option {
+            padding: 12px 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
+            transition: 0.2s;
+        }
+
+        .payment-option:hover { background: rgba(56, 189, 248, 0.1); }
+        .payment-option.selected { color: #38bdf8; background: rgba(56, 189, 248, 0.05); font-weight: bold; }
+
         .btn-wa, .btn-alert-ok {
             width: 100%;
             padding: 16px;
             border-radius: 18px;
             font-weight: bold;
-            margin-top: 20px;
+            margin-top: 15px;
             border: none;
             font-size: 14px;
             display: flex;
@@ -115,6 +155,7 @@
         }
 
         .btn-wa { background: #16a34a; color: white; }
+        .btn-wa:disabled { background: #334155; color: #64748b; cursor: not-allowed; }
         .btn-alert-ok { background: #38bdf8; color: #0f172a; }
 
         .payment-section { margin-top: 35px; text-align: center; padding: 0 15px; }
@@ -173,43 +214,56 @@
                 <i class="fas fa-exclamation-triangle text-amber-500 text-2xl"></i>
             </div>
             <h2 style="font-weight: 900; font-size: 18px; color: white;">DATA TIDAK LENGKAP</h2>
-            <p style="font-size: 13px; color: #94a3b8; margin-top: 10px;">Waduh! Masukkan ID, Zone & Nickname dulu ya!</p>
+            <p style="font-size: 13px; color: #94a3b8; margin-top: 10px;">Waduh! Masukkan ID, Server & Nickname dulu ya!</p>
             <button class="btn-alert-ok" onclick="closeAlert()">OKE SIAP 🖕</button>
         </div>
     </div>
 
     <div id="modalCheckout" class="modal-overlay">
         <div class="modal-content">
-            <div style="width: 60px; height: 60px; background: rgba(56, 189, 248, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px;">
+            <div style="width: 60px; height: 60px; background: rgba(56, 189, 248, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px;">
                 <i class="fas fa-shopping-basket text-sky-500 text-2xl"></i>
             </div>
-            <h2 style="font-weight: 900; font-size: 20px; color: white; margin-bottom: 5px;">DETAIL PESANAN</h2>
-            <p style="font-size: 11px; color: #94a3b8; margin-bottom: 20px;">Konfirmasi data sebelum checkout</p>
+            <h2 style="font-weight: 900; font-size: 18px; color: white; margin-bottom: 5px;">DETAIL PESANAN</h2>
+            <p style="font-size: 11px; color: #94a3b8; margin-bottom: 15px;">Konfirmasi data & pilih pembayaran</p>
             
-            <div style="background: #0f172a; padding: 20px; border-radius: 20px; font-size: 14px; text-align: left; line-height: 2; border: 1px solid rgba(255,255,255,0.05);">
-                <div style="display: flex; justify-content: space-between;"><span style="color:#64748b">Produk:</span> <b id="resItem"></b></div>
-                <div style="display: flex; justify-content: space-between;"><span style="color:#64748b">Harga:</span> <b id="resPrice" style="color: #38bdf8;"></b></div>
-                <div style="display: flex; justify-content: space-between; border-top: 1px solid rgba(255,255,255,0.05); margin-top: 10px; padding-top: 10px;"><span style="color:#64748b">ID Akun:</span> <b id="resId"></b></div>
-                <div style="display: flex; justify-content: space-between;"><span style="color:#64748b">Nick:</span> <b id="resNick"></b></div>
+            <div style="background: #0f172a; padding: 15px; border-radius: 20px; font-size: 13px; text-align: left; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 12px;">
+                <div style="display: flex; justify-content: space-between; padding-bottom: 4px;"><span style="color:#64748b">Produk</span> <b id="resItem"></b></div>
+                <div style="display: flex; justify-content: space-between; padding-bottom: 8px;"><span style="color:#64748b">Harga</span> <b id="resPrice" style="color: #38bdf8;"></b></div>
+                
+                <div style="border-bottom: 1px solid rgba(255,255,255,0.1); margin: 4px 0 8px 0;"></div>
+
+                <div style="display: flex; justify-content: space-between; padding-bottom: 4px;"><span style="color:#64748b">ID Akun</span> <b id="resId"></b></div>
+                <div style="display: flex; justify-content: space-between;"><span style="color:#64748b">Nick</span> <b id="resNick"></b></div>
             </div>
 
-            <button class="btn-wa" onclick="sendToWA()">
+            <div class="payment-dropdown-btn" onclick="togglePaymentList()">
+                <span id="selectedMethodLabel">Pilih Metode Pembayaran</span>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="payment-list" id="paymentList">
+                <div class="payment-option" onclick="selectPayment(this, 'QRIS (All Payment)')"><span>QRIS (All Payment)</span></div>
+                <div class="payment-option" onclick="selectPayment(this, 'DANA')"><span>DANA</span></div>
+                <div class="payment-option" onclick="selectPayment(this, 'GOPAY')"><span>GOPAY</span></div>
+                <div class="payment-option" onclick="selectPayment(this, 'SeaBank')"><span>SeaBank</span></div>
+                <div class="payment-option" onclick="selectPayment(this, 'CASH / TUNAI (OFFLINE)')"><span>CASH / TUNAI (OFFLINE)</span></div>
+            </div>
+
+            <button class="btn-wa" id="btnConfirm" onclick="sendToWA()" disabled>
                 <i class="fab fa-whatsapp text-lg"></i> KONFIRMASI PEMBAYARAN
             </button>
-            <p onclick="closeModal()" style="margin-top: 20px; font-size: 11px; color: #64748b; font-weight: bold; cursor: pointer; text-transform: uppercase;">Batal</p>
+            <p onclick="closeModal()" style="margin-top: 15px; font-size: 11px; color: #64748b; font-weight: bold; cursor: pointer; text-transform: uppercase;">Batal</p>
         </div>
     </div>
 
     <script>
         const dataProduk = [
-            // SPESIAL ITEM
             { n: "1X Weekly Diamond Pass", p: "29.000", i: "fa-crown" },
             { n: "2X Weekly Diamond Pass", p: "57.500", i: "fa-crown" },
             { n: "3X Weekly Diamond Pass", p: "85.000", i: "fa-crown" },
             { n: "4X Weekly Diamond Pass", p: "114.000", i: "fa-crown" },
             { n: "5X Weekly Diamond Pass", p: "143.000", i: "fa-crown" },
             { n: "Twilight Pass", p: "149.500", i: "fa-crown" },
-            // DIAMOND LIST LENGKAP
             { n: "3 Diamond", p: "1.500" }, { n: "5 Diamond", p: "2.000" },
             { n: "12 Diamond", p: "4.500" }, { n: "19 Diamond", p: "7.000" },
             { n: "28 Diamond", p: "9.000" }, { n: "36 Diamond", p: "10.500" },
@@ -275,30 +329,50 @@
         });
 
         let currentOrder = {};
+        let selectedMethod = "";
 
         function openCheckout(item, price) {
             const id = document.getElementById('userId').value;
             const zone = document.getElementById('zoneId').value;
             const nick = document.getElementById('nickname').value;
             
-            if(!id || !zone || !nick) { 
-                document.getElementById('modalAlert').style.display = 'flex';
-                return; 
-            }
+            if(!id || !zone || !nick) { document.getElementById('modalAlert').style.display = 'flex'; return; }
 
             currentOrder = { item, price, id, zone, nick };
             document.getElementById('resItem').innerText = item;
             document.getElementById('resPrice').innerText = "Rp " + price;
             document.getElementById('resId').innerText = id + " (" + zone + ")";
             document.getElementById('resNick').innerText = nick;
+            
+            selectedMethod = "";
+            document.getElementById('selectedMethodLabel').innerText = "Pilih Metode Pembayaran";
+            document.getElementById('btnConfirm').disabled = true;
+            document.getElementById('paymentList').style.display = 'none';
+            document.querySelectorAll('.payment-option').forEach(el => el.classList.remove('selected'));
+            
             document.getElementById('modalCheckout').style.display = 'flex';
+        }
+
+        function togglePaymentList() {
+            const list = document.getElementById('paymentList');
+            list.style.display = list.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function selectPayment(el, method) {
+            document.querySelectorAll('.payment-option').forEach(opt => opt.classList.remove('selected'));
+            el.classList.add('selected');
+            selectedMethod = method;
+            document.getElementById('selectedMethodLabel').innerText = method;
+            document.getElementById('btnConfirm').disabled = false;
+            document.getElementById('paymentList').style.display = 'none';
         }
 
         function closeModal() { document.getElementById('modalCheckout').style.display = 'none'; }
         function closeAlert() { document.getElementById('modalAlert').style.display = 'none'; }
 
         function sendToWA() {
-            const msg = `Halo Admin LAXSTORE! 👋\n\nSaya ingin Top Up ML:\n📦 *Item:* ${currentOrder.item}\n💰 *Harga:* Rp ${currentOrder.price}\n🆔 *ID:* ${currentOrder.id} (${currentOrder.zone})\n👤 *Nick:* ${currentOrder.nick}\n\nMohon instruksi pembayarannya Admin!`;
+            const sep = "---------------------------------------";
+            const msg = `*ORDER BARU - LAXSTORE* 🚀\n${sep}\n📦 *Produk* : ${currentOrder.item}\n💰 *Harga* : Rp ${currentOrder.price}\n💳 *Metode* : ${selectedMethod}\n${sep}\n🆔 *ID Akun* : ${currentOrder.id} (${currentOrder.zone})\n👤 *Nick* : ${currentOrder.nick}\n${sep}\n\nMohon instruksi pembayarannya Admin!`;
             window.open(`https://wa.me/6285642962052?text=${encodeURIComponent(msg)}`, '_blank');
         }
     </script>
