@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+(<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
@@ -372,7 +372,7 @@
 
         function sendToWA() {
             const sep = "---------------------------------------";
-            const msg = `*ORDERAN BARU - LAXSTORE* 🚀\n${sep}\n🎮 *Game* : MOBILE LEGENDS\n📦 *Produk* : ${currentOrder.item}\n💰 *Harga* : Rp ${currentOrder.price}\n💳 *Payment* : ${selectedMethod}\n${sep}\n🆔 *User ID* : ${currentOrder.id}\n👤 *Nick* : ${currentOrder.nick}\n${sep}\n\n*Mohon Instruksinya MinLaxs!*`;
+            const msg = `*ORDERAN BARU - LAXSTORE* 🚀\n${sep}\n🎮 *Game* : MOBILE LEGENDS\n📦 *Produk* : ${currentOrder.item}\n💰 *Harga* : Rp ${currentOrder.price}\n💳 *Payment* : ${selectedMethod}\n${sep}\n🆔 *User ID* : ${currentOrder.id} (${currentOrder.zone})\n👤 *Nick* : ${currentOrder.nick}\n${sep}\n\n*Mohon Instruksinya MinLaxs!*`;
             window.open(`https://wa.me/6285642962052?text=${encodeURIComponent(msg)}`, '_blank');
         }
     </script>
